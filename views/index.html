@@ -64,6 +64,8 @@
     <script src="assets/js/leaflet.js"></script>
     <script src="assets/js/ion.rangeSlider.min.js"></script>
     <script type="text/javascript">
+        $("#systable").hide();
+
         function getColor(type) {
             return type === 'red2' ? '#bd0026' :
                 type === 'red' ? '#f03b20' :
@@ -155,6 +157,7 @@
 
 
         function generateTableandMap(data) {
+            $("#systable").show();
             clearAllMapLayers();
             var allEvals = data.results;
             var allSys = data.sys;
