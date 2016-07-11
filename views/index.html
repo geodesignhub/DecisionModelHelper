@@ -195,34 +195,65 @@
                 from: 3,
                 step: 1,
                 prettify_enabled: true,
-            }).on("change", function() {
-                var $this = $(this),
-                    value = $this.prop("value"),
-                    id = $this.prop("id").split('-')[1];
-                var elen = allEvalLayers.length;
-                var transpPref = {
-                    10: 0.30,
-                    9: 0.27,
-                    8: 0.24,
-                    7: 0.21,
-                    6: 0.18,
-                    5: 0.15,
-                    4: 0.12,
-                    3: 0.09,
-                    2: 0.09,
-                    1: 0.09
-                }
-                for (var x = 0; x < elen; x++) {
-                    var curEval = allEvalLayers[x];
-                    if (curEval.id === parseInt(id)) {
-                        if (lGroup.hasLayer(curEval.layer)) {
-                            var l1 = lGroup.getLayer(curEval.lid);
-                            var tp = transpPref[parseInt(value)];
-                            l1.setStyle({
-                                "fillOpacity": tp,
-                            });
+                onFinish: function(data) {
+                    console.log(data.input[0]);
+                    var $this = $(data.input),
+                        value = $this.prop("value"),
+                        id = $this.prop("id").split('-')[1];
+                    var elen = allEvalLayers.length;
+                    var transpPref = {
+                            10: 0.30,
+                            9: 0.27,
+                            8: 0.24,
+                            7: 0.21,
+                            6: 0.18,
+                            5: 0.15,
+                            4: 0.12,
+                            3: 0.09,
+                            2: 0.09,
+                            1: 0.09
                         }
-                        break;
+                        // get the existing values 
+                    var idPrefs = [];
+                    $('[id^=sli-]').each(function(index) {
+                        idPrefs.push({
+                            'id': $(this).prop("id").split('-')[1],
+                            'pref': $(this).prop("value")
+                        })
+                    });
+                    idPrefs.sort(function(a, b) {
+                        return a.pref - b.pref;
+                    });
+                    console.log(idPrefs);
+                    var idpreflen = idPrefs.length;
+                    for (var k3 = 0; k3 < idpreflen; k3++) {
+                        var curIDPref = idPrefs[k3];
+                        var curID = parseInt(curIDPref.id);
+                        var curPref = curIDPref.pref;
+                        for (var x1 = 0; x1 < elen; x1++) {
+                            var cEval = allEvalLayers[x1];
+                            if (cEval.id === curID) {
+                                if (lGroup.hasLayer(cEval.layer)) {
+                                    var l2 = lGroup.getLayer(cEval.lid);
+                                    l2.bringToBack();
+                                }
+                                break;
+                            }
+                        }
+                    }
+
+                    for (var x = 0; x < elen; x++) {
+                        var curEval = allEvalLayers[x];
+                        if (curEval.id === parseInt(id)) {
+                            if (lGroup.hasLayer(curEval.layer)) {
+                                var l1 = lGroup.getLayer(curEval.lid);
+                                var tp = transpPref[parseInt(value)];
+                                l1.setStyle({
+                                    "fillOpacity": tp,
+                                });
+                            }
+                            break;
+                        }
                     }
                 }
             });
