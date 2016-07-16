@@ -7,7 +7,10 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <!-- Aesthetics! -->
     <link rel="stylesheet" type="text/css" href="assets/css/flatty.css" />
-    <link rel="stylesheet" type="text/css" href="assets/css/base.css" />
+
+    <link type="text/css" rel="stylesheet" href="assets/css/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="assets/css/style.css">
+    <link rel="stylesheet" type="text/css" href="assets/css/base.css">
     <link rel="stylesheet" type="text/css" href="assets/css/leaflet.css" />
     <link rel="stylesheet" type="text/css" href="assets/css/ion.rangeSlider.css" />
     <link rel="stylesheet" type="text/css" href="assets/css/ion.rangeSlider.skinModern.css" />
@@ -15,53 +18,62 @@
     <link href='https://fonts.googleapis.com/css?family=Raleway' rel='stylesheet' type='text/css'>
 </head>
 
-<body id="leafletApp">
-    <section class="map" id="map">
-        <section class="overlay"></section>
-        <section class="information">
-            <h1>Geodesign Hub Decision Model Helper</h1>
-            <p class="description">A <a href="http://www.geodesignsupport.com/section/api/" target="_blank">Geodesign Hub API</a> experiment that helps you visualize your decision model. All code is available on <a href="https://github.com/hrishiballal/GDHDecisionModelHelper/">GitHub</a>.</p>
-            <br>
-            <p class="instruction"><span class="grey">1</span> Please Enter your Geodesign Hub <a href="https://www.geodesignhub.com/api/token/" target="_blank">API Token</a> and Project ID to populate project details. </p>
-            <ul class="input-list style-2 clearfix">
-                <li>
-                    <input type="text" id="apikey" placeholder="Enter API Key">
-                </li>
-                <li>
-                    <input type="text" class="" maxlength="16" id="projectid" placeholder="Project ID">
-                </li>
-                <li>
+<body>
+
+    <div class="container-fluid">
+        <div class="row">
+
+            <div class="col-sm-3 col-md-5 main">
+
+                <h1 class="page-header">Geodesign Hub Decision Model Helper</h1>
+                <section class="information">
+
+                    <p class="description">A <a href="http://www.geodesignsupport.com/section/api/" target="_blank">Geodesign Hub API</a> experiment that helps you visualize your decision model. All code is available on <a href="https://github.com/hrishiballal/GDHDecisionModelHelper/">GitHub</a>.</p>
                     <br>
-                    <button type="submit" class="button" onclick="submitProjectDetails()">Get Evaluation Data</button>
+                    <p class="instruction"><span class="grey">1</span> Please Enter your Geodesign Hub <a href="https://www.geodesignhub.com/api/token/" target="_blank">API Token</a> and Project ID to populate project details. </p>
+                    <ul class="input-list style-2 clearfix">
+                        <li>
+                            <input type="text" id="apikey" placeholder="Enter API Key">
+                        </li>
+                        <li>
+                            <input type="text" class="" maxlength="16" id="projectid" placeholder="Project ID">
+                        </li>
+                        <li>
+                            <br>
+                            <button type="submit" class="button" onclick="submitProjectDetails()">Get Evaluation Data</button>
+                            <br>
+                        </li>
+                    </ul>
                     <br>
-                </li>
-            </ul>
-            <br>
-            <br>
-            <br>
-            <br>
-            <br>
-            <br>
-            <br>
-            <p class="instruction"><span class="grey">2</span> Evaluation maps for all systems are loaded on the map and sliders to control your preferences are below. Change preference to adjust transperency.</p>
-            <table style="width:100%" id="systable" class="table table-hover table-condensed table-bordered">
-                <thead>
-                    <tr>
-                        <td>
-                            <p>&nbsp;</p>
-                        </td>
-                        <td>System Name</td>
-                        <td>Preference</td>
-                    </tr>
-                </thead>
-                <tbody>
-                </tbody>
-            </table>
-        </section>
-    </section>
+                    <p class="instruction"><span class="grey">2</span> Evaluation maps for all systems are loaded on the map and sliders to control your preferences are below. Change preference to adjust transperency.</p>
+                    <table style="width:100%" id="systable" class="table table-hover table-condensed table-bordered">
+                        <thead>
+                            <tr>
+                                <td>
+                                    <p>&nbsp;</p>
+                                </td>
+                                <td>System Name</td>
+                                <td>Preference</td>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        </tbody>
+                    </table>
+                </section>
+
+            </div>
+
+            <div id="map" class="col-sm-9 col-md-7 sidebar">
+
+            </div>
+
+        </div>
+    </div>
+
     <script src="assets/js/jquery.min.js"></script>
     <script src="assets/js/humane.min.js"></script>
     <script src="assets/js/leaflet.js"></script>
+    <script src="assets/js/underscore-min.js"></script>
     <script src="assets/js/ion.rangeSlider.min.js"></script>
     <script type="text/javascript">
         $("#systable").hide();
@@ -76,12 +88,8 @@
                 '#808080';
         }
         var mymap = L.map('map', {
-            dragging: false
+
         }).setView([51.505, -0.09], 13);
-        mymap.dragging.disable();
-        mymap.touchZoom.disable();
-        mymap.doubleClickZoom.disable();
-        mymap.scrollWheelZoom.disable();
         var allEvalLayers = [];
         var lGroup = L.layerGroup().addTo(mymap);
         L.tileLayer('http://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png', {
