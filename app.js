@@ -14,8 +14,8 @@ app.use(bodyParser.urlencoded({
 app.use(bodyParser.json())
 
 app.get('/', function(request, response) {
-    if (request.query.apitoken && request.query.projectname) {
-        response.render('dmauto', { 'apitoken': request.query.apitoken, 'projectname': request.query.projectname });
+    if (request.query.apitoken && request.query.projectid) {
+        response.render('dmauto', { 'apitoken': request.query.apitoken, 'projectid': request.query.projectid });
     } else {
         response.render('dm');
     }
