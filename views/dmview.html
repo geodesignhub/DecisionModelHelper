@@ -96,8 +96,13 @@
             attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, &copy; <a href="https://cartodb.com/attributions">CartoDB</a>'
         }).addTo(mymap);
 
-
         function submitProjectDetails() {
+            var apikey = $("#apikey").val();
+            var projectid = $("#projectid").val();
+            submitPost(apikey, projectid);
+        }
+
+        function submitPost(apikey, projectid) {
             var apikey = $("#apikey").val();
             var projectid = $("#projectid").val();
             if (apikey.length > 20 && projectid.length == 16) {

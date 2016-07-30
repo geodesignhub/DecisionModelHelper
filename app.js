@@ -2,9 +2,11 @@ var express = require("express");
 var req = require('request');
 var async = require('async');
 var bodyParser = require('body-parser');
-var app = express();
+var ejs = require('ejs');
 
-app.use(express.static(__dirname + '/views'));
+var app = express();
+app.set('view engine', 'ejs');
+// app.use(express.static(__dirname + '/views'));
 app.use('/assets', express.static('static'));
 app.use(bodyParser.urlencoded({
     extended: false
@@ -12,7 +14,11 @@ app.use(bodyParser.urlencoded({
 app.use(bodyParser.json())
 
 app.get('/', function(request, response) {
-    response.sendFile('/index.html');
+    if (request.query.apitoken && request.query.projectname) {
+        response.render('dmauto', { 'apitoken': request.query.apitoken, 'projectname': request.query.projectname });
+    } else {
+        response.render('dm');
+    }
 });
 
 app.post('/post/', function(request, response) {

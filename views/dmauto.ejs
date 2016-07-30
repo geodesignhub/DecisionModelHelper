@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Geodesign Hub Decision Model Helper</title>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <!-- Aesthetics! -->
+    <link rel="stylesheet" type="text/css" href="assets/css/flatty.css" />
+
+    <link type="text/css" rel="stylesheet" href="assets/css/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="assets/css/style.css">
+    <link rel="stylesheet" type="text/css" href="assets/css/base.css">
+    <link rel="stylesheet" type="text/css" href="assets/css/leaflet.css" />
+    <link rel="stylesheet" type="text/css" href="assets/css/ion.rangeSlider.css" />
+    <link rel="stylesheet" type="text/css" href="assets/css/ion.rangeSlider.skinModern.css" />
+    <link href='https://fonts.googleapis.com/css?family=Open+Sans' rel='stylesheet' type='text/css'>
+    <link href='https://fonts.googleapis.com/css?family=Raleway' rel='stylesheet' type='text/css'>
+</head>
+
+<body>
+
+    <div class="container-fluid">
+        <div class="row">
+
+            <div class="col-sm-3 col-md-5 main">
+
+                <h1 class="page-header">Geodesign Hub Decision Model Helper</h1>
+                <section class="information">
+                    <p class="description">A <a href="http://www.geodesignsupport.com/section/api/" target="_blank">Geodesign Hub API</a> experiment that helps you visualize your decision model. All code is available on <a href="https://github.com/hrishiballal/GDHDecisionModelHelper/">GitHub</a>.</p>
+                    <br>
+                    <p class="instruction"><span class="grey">1</span> Please Enter your Geodesign Hub <a href="https://www.geodesignhub.com/api/token/" target="_blank">API Token</a> and Project ID to populate project details. </p>
+                    <ul class="input-list style-2 clearfix">
+                        <li>
+                            <input type="text" id="apikey" placeholder="Enter API Key" value="<%- apitoken %>">
+                        </li>
+                        <li>
+                            <input type="text"  value="<%- projectname %>" class="" maxlength="16" id="projectid" placeholder="Project ID">
+                        </li>
+                        <li>
+                            <br>
+                            <button type="submit" class="button" onclick="submitProjectDetails()">Get Evaluation Data</button>
+                            <br>
+                        </li>
+                    </ul>
+                    <br>
+                    <p class="instruction"><span class="grey">2</span> Evaluation maps for all systems are loaded on the map and sliders to control your preferences are below. Change preference to adjust transperency.</p>
+                    <table style="width:100%" id="systable" class="table table-hover table-condensed table-bordered">
+                        <thead>
+                            <tr>
+                                <td>
+                                    <p>&nbsp;</p>
+                                </td>
+                                <td>System Name</td>
+                                <td>Preference</td>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        </tbody>
+                    </table>
+                </section>
+
+            </div>
+
+            <div id="map" class="col-sm-9 col-md-7 sidebar">
+
+            </div>
+
+        </div>
+    </div>
+
+    <script src="assets/js/jquery.min.js"></script>
+    <script src="assets/js/humane.min.js"></script>
+    <script src="assets/js/leaflet.js"></script>
+    <script src="assets/js/underscore-min.js"></script>
+    <script src="assets/js/ion.rangeSlider.min.js"></script>
+    <script type="text/javascript">
+        $("#systable").hide();
+
+        function getColor(type) {
+            return type === 'red2' ? '#bd0026' :
+                type === 'red' ? '#f03b20' :
+                type === 'yellow' ? '#FFFF00' :
+                type === 'green' ? '#74c476' :
+                type === 'green2' ? '#31a354' :
+                type === 'green3' ? '#006d2c' :
+                '#808080';
+        }
+        var mymap = L.map('map', {
+
+        }).setView([51.505, -0.09], 13);
+        var allEvalLayers = [];
+        var lGroup = L.layerGroup().addTo(mymap);
+        L.tileLayer('http://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png', {
+            attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, &copy; <a href="https://cartodb.com/attributions">CartoDB</a>'
+        }).addTo(mymap);
+
+
+
+        function submitPost(apikey, projectid) {
+            
+            if (apikey.length > 20 && projectid.length == 16) {
+                var d = {
+                    'apikey': apikey,
+                    'projectid': projectid
+                };
+                var promise = $.ajax({
+                    url: '/post/',
+                    data: JSON.stringify(d),
+                    contentType: "application/json",
+                    type: 'POST'
+                });
+
+                humane.log("Submitting request..", {
+                    addnCls: 'humane-flatty-info'
+                });
+                promise.done(function(data) {
+                    if (data.status) {
+                        generateTableandMap(data);
+                        humane.log("Project Data populated.", {
+                            addnCls: 'humane-flatty-success'
+                        });
+
+                    } else {
+                        humane.log("Error in getting project data. Please check your project id and credentials.", {
+                            addnCls: 'humane-flatty-error'
+                        });
+
+                    }
+                });
+                promise.fail(function(data) {
+                    humane.log("Either the API Key or Project ID is incorrect. Please check your input.", {
+                        addnCls: 'humane-flatty-error'
+                    });
+                });
+            } else {
+                humane.log("Please enter a valid project id and a API key.", {
+                    addnCls: 'humane-flatty-error'
+                });
+            }
+
+        }
+
+        function clearAllMapLayers() {
+            lGroup.clearLayers();
+            allEvalLayers = [];
+            $("#systable > tbody").html("");
+        }
+
+        function style(feature) {
+            var curFeature = feature.geometry.type;
+            var curColor = getColor(feature.properties.areatype);
+            return {
+                fillColor: curColor,
+                weight: 1,
+                stroke: false,
+                opacity: 0.09,
+                color: curColor,
+                dashArray: '',
+                // opacity: 0.2,
+                fillOpacity: 0.09,
+            };
+        }
+
+
+        function generateTableandMap(data) {
+            $("#systable").show();
+            clearAllMapLayers();
+            var allEvals = data.results;
+            var allSys = data.sys;
+            var allSyslen = allSys.length;
+            var evallen = allEvals.length;
+            for (var x1 = 0; x1 < evallen; x1++) {
+                var curEval = allEvals[x1];
+                var curGJ = curEval.geojson;
+                var l = L.geoJson(curGJ, {
+                    style: style
+                });
+                var lid = L.stamp(l);
+                lGroup.addLayer(l);
+                allEvalLayers.push({
+                    'layer': l,
+                    'lid': lid,
+                    'id': curEval.sysid
+                });
+                if (curGJ.features.length > 0) {
+                    mymap.fitBounds(l.getBounds());
+                }
+            }
+            // add the geojson to the maps
+            // generate table and visitiblity 
+            for (var k1 = 0; k1 < allSyslen; k1++) {
+                var sysid = allSys[k1].id;
+                var sysname = allSys[k1].sysname;
+                $("#systable").find('tbody')
+                    .append($('<tr>').append('<td><input class="checkbox" type = "checkbox" checked name="evalcb" value = "' + sysid + '" ></td><td><p class="sysname">' + sysname + '</p></td><td><input type="hidden" id="sli-' + sysid + '" class="slider-input" value=30 />'));
+            }
+            $('[id^=sli-]').ionRangeSlider({
+                type: "single",
+                min: 1,
+                max: 10,
+                from: 3,
+                step: 1,
+                prettify_enabled: true,
+                onFinish: function(data) {
+                    console.log(data.input[0]);
+                    var $this = $(data.input),
+                        value = $this.prop("value"),
+                        id = $this.prop("id").split('-')[1];
+                    var elen = allEvalLayers.length;
+                    var transpPref = {
+                            10: 0.30,
+                            9: 0.27,
+                            8: 0.24,
+                            7: 0.21,
+                            6: 0.18,
+                            5: 0.15,
+                            4: 0.12,
+                            3: 0.09,
+                            2: 0.09,
+                            1: 0.09
+                        }
+                        // get the existing values 
+                    var idPrefs = [];
+                    $('[id^=sli-]').each(function(index) {
+                        idPrefs.push({
+                            'id': $(this).prop("id").split('-')[1],
+                            'pref': $(this).prop("value")
+                        })
+                    });
+                    idPrefs.sort(function(a, b) {
+                        return a.pref - b.pref;
+                    });
+                    console.log(idPrefs);
+                    var idpreflen = idPrefs.length;
+                    for (var k3 = 0; k3 < idpreflen; k3++) {
+                        var curIDPref = idPrefs[k3];
+                        var curID = parseInt(curIDPref.id);
+                        var curPref = curIDPref.pref;
+                        for (var x1 = 0; x1 < elen; x1++) {
+                            var cEval = allEvalLayers[x1];
+                            if (cEval.id === curID) {
+                                if (lGroup.hasLayer(cEval.layer)) {
+                                    var l2 = lGroup.getLayer(cEval.lid);
+                                    l2.bringToBack();
+                                }
+                                break;
+                            }
+                        }
+                    }
+
+                    for (var x = 0; x < elen; x++) {
+                        var curEval = allEvalLayers[x];
+                        if (curEval.id === parseInt(id)) {
+                            if (lGroup.hasLayer(curEval.layer)) {
+                                var l1 = lGroup.getLayer(curEval.lid);
+                                var tp = transpPref[parseInt(value)];
+                                l1.setStyle({
+                                    "fillOpacity": tp,
+                                });
+                            }
+                            break;
+                        }
+                    }
+                }
+            });
+            $(".checkbox").change(function() {
+                var checked = [];
+                var unchecked = [];
+                $.each($("input[name='evalcb']"), function() {
+                    if ($(this).is(':checked')) {
+                        checked.push($(this).val());
+                    } else {
+                        unchecked.push($(this).val());
+                    }
+                    // or you can do something to the actual checked checkboxes by working directly with  'this'
+                    // something like $(this).hide() (only something useful, probably) :P
+                });
+                var checkedsysnums = checked.map(function(x) {
+                    return parseInt(x, 10);
+                });
+                lGroup.clearLayers();
+                var elayerlen = allEvalLayers.length;
+                for (var j1 = 0; j1 < elayerlen; j1++) {
+                    var curElayer = allEvalLayers[j1];
+                    if (jQuery.inArray(curElayer.id, checkedsysnums) !== -1) {
+                        lGroup.addLayer(curElayer.layer);
+                    }
+                }
+            });
+        }
+
+        submitPost("<% apitoken %>","<% projectname %>");
+    </script>
+</body>
+
+</html>
