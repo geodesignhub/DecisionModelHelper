@@ -14,11 +14,11 @@ app.use(bodyParser.urlencoded({
 app.use(bodyParser.json())
 
 app.get('/', function(request, response) {
+    var opts = {};
     if (request.query.apitoken && request.query.projectid) {
-        response.render('dmauto', { 'apitoken': request.query.apitoken, 'projectid': request.query.projectid });
-    } else {
-        response.render('dm');
+        opts = { 'apitoken': request.query.apitoken, 'projectid': request.query.projectid };
     }
+    response.render('dm', opts);
 });
 
 app.post('/post/', function(request, response) {

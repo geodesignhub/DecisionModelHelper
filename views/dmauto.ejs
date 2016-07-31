@@ -32,10 +32,10 @@
                     <p class="instruction"><span class="grey">1</span> Please Enter your Geodesign Hub <a href="https://www.geodesignhub.com/api/token/" target="_blank">API Token</a> and Project ID to populate project details. </p>
                     <ul class="input-list style-2 clearfix">
                         <li>
-                            <input type="text" id="apikey" placeholder="Enter API Key" value="<%- apitoken %>">
+                            <input type="text" id="apikey" placeholder="Enter API Key">
                         </li>
                         <li>
-                            <input type="text"  value="<%- projectid %>" class="" maxlength="16" id="projectid" placeholder="Project ID">
+                            <input type="text" class="" maxlength="16" id="projectid" placeholder="Project ID">
                         </li>
                         <li>
                             <br>
@@ -294,8 +294,11 @@
                 }
             });
         }
-
+        <% if (apitoken and projectid){ %>
+        $("#apikey").val(<%- apitoken %>);
+        $("#projectid").val(<%- projectid %>);
         submitPost("<%- apitoken %>","<%- projectid %>");
+        <% } %>
     </script>
 </body>
 
