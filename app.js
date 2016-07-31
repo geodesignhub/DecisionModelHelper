@@ -17,8 +17,12 @@ app.get('/', function(request, response) {
     var opts = {};
     if (request.query.apitoken && request.query.projectid) {
         opts = { 'apitoken': request.query.apitoken, 'projectid': request.query.projectid };
+    } else {
+        opts = { 'apitoken': '0', 'projectid': '0' };
+
     }
-    response.render('dm', opts);
+
+    response.render('dmauto', opts);
 });
 
 app.post('/post/', function(request, response) {

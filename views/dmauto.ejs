@@ -294,11 +294,20 @@
                 }
             });
         }
-        <% if (apitoken and projectid){ %>
-        $("#apikey").val(<%- apitoken %>);
-        $("#projectid").val(<%- projectid %>);
-        submitPost("<%- apitoken %>","<%- projectid %>");
-        <% } %>
+    
+    
+    </script>
+    <script>
+        var apitoken = <%= apitoken  %>;  //var test is now assigned to getTest which will only work on browsers
+        var projectid = <%= projectid  %>;  //var test is now assigned to getTest which will only work on browsers  
+        $(function(){
+            if (apitoken && projectid)
+                {
+                    $("#apikey").val(apitoken);
+                    $("#projectid").val(projectid);
+                    submitPost(apitoken,projectid);
+                }    
+        });
     </script>
 </body>
 
