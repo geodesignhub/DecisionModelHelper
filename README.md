@@ -5,7 +5,7 @@ It can be useful to understand how the decision model performs spatially.
 
 ![alt text][logo]
 
-[logo]: http://i.imgur.com/gLmvV1q.png "Geodesign Hub Desicion model"
+[logo]: https://i.imgur.com/gLmvV1q.png "Geodesign Hub Desicion model"
 
 
 
