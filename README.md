@@ -1,35 +1,12 @@
 # Decision Model Helper
-This is small plugin to help with a decision model in a Geodesign Project. It uses the Geodesign Hub [API](http://www.geodesignsupport.com/section/api/). Once the credentials and the project ID is entered, the system downloads all evaluations and builds sliders to vary transperency. 
+This is small plugin to help with a decision model in a Geodesign Project. It uses the [Geodesign Hub API](http://www.geodesignsupport.com/section/api/). The tool downloads all evaluations and builds sliders to vary transperency of the evaluations to see areas of opportunity and risk based on your preferences. 
 
-It can be useful to understand how the decision model performs spatially. 
+It can be useful to understand how the decision model performs spatially and stimulate discussion in your team.
+###Adding to your project
+This plugin can be added to your project using the Administration panel or at the time of creating a project. 
+
+## Screenshot
 
 ![alt text][logo]
 
 [logo]: https://i.imgur.com/gLmvV1q.png "Geodesign Hub Desicion model"
-
-
-
-
----
-### Licence
-The MIT License (MIT)
-
-Copyright (c) 2016 Hrishikesh Ballal
-
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
