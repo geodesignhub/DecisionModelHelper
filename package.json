@@ -17,11 +17,11 @@
     "author": "Hrishikesh Ballal",
     "license": "MIT",
     "dependencies": {
-        "async": "^1.5.2",
-        "body-parser": "^1.15.1",
-        "express": "^4.13.4",
-        "handlebars": "^4.0.5",
-        "request": "^2.72.0",
+        "async": ">=1.5.2",
+        "body-parser": ">=1.15.1",
+        "express": ">=4.13.4",
+        "handlebars": ">=4.0.5",
+        "request": ">=2.72.0",
         "ejs": "^2.5.1"
     }
 }
